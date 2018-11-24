@@ -8,10 +8,9 @@
 #include <unordered_map> // duh
 #include <vector>        // vector<>
 
-namespace tide {
-namespace Log {
+namespace tide { namespace Engine { namespace Log {
 
-  /* Namespace Data Members */
+/* Namespace Data Members */
 
   /** @brief Empty Log Message
     *
@@ -142,14 +141,13 @@ namespace Log {
     static std::shared_ptr<LogStats> m_instance;
     std::unordered_map<std::wstring, LogLevel> m_rLevels;
   };
-}
-}
+}/*Log*/}/*Engine*/}/*tide*/
 
-#define LOG_STAT     ThEngine::Log::LogStats::GetInstance()
-#define LOG_DEBUG(a) ThEngine::Log::Log(a, ThEngine::Log::Debug)
-#define LOG_INFO(a)  ThEngine::Log::Log(a, ThEngine::Log::Info)
-#define LOG_WARN(a)  ThEngine::Log::Log(a, ThEngine::Log::Warn)
-#define LOG_ERROR(a) ThEngine::Log::Log(a, ThEngine::Log::Error)
-#define LOG_FATAL(a) ThEngine::Log::Log(a, ThEngine::Log::Fatal)
+#define LOG_STAT     tide::Engine::Log::LogStats::GetInstance()
+#define LOG_DEBUG(a) tide::Engine::Log::Log(a, tide::Engine::Log::Debug)
+#define LOG_INFO(a)  tide::Engine::Log::Log(a, tide::Engine::Log::Info)
+#define LOG_WARN(a)  tide::Engine::Log::Log(a, tide::Engine::Log::Warn)
+#define LOG_ERROR(a) tide::Engine::Log::Log(a, tide::Engine::Log::Error)
+#define LOG_FATAL(a) tide::Engine::Log::Log(a, tide::Engine::Log::Fatal)
 
 #endif //TLOG_HPP

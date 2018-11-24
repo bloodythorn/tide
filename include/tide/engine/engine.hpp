@@ -12,16 +12,16 @@ namespace Engine {
 
 class Engine : protected Loop, private NonCopyable {
 public:
-//  Engine(void);
-//protected:
-//
-//  StateManager m_sm;
-//
-//private:
-//
-//  void handle(double) override;
-//  void update(double) override;
-//  void render(double) override;
+  Engine(void);
+protected:
+
+  StateManager m_sm;
+
+private:
+
+  void handle(double) override;
+  void update(double) override;
+  void render(double) override;
 };
 }
 }
