@@ -1,5 +1,10 @@
 
 # Playing Cards
-add_executable(playingcards playingcards.cpp)
-add_dependencies(playingcards tide)
-target_link_libraries(playingcards tide)
+add_executable(test_pcards test_pcards.cpp)
+add_dependencies(test_pcards tide)
+target_link_libraries(test_pcards tide)
+
+# Loop Tests
+add_executable(test_loop test_loop.cpp)
+add_dependencies(test_loop tide)
+target_link_libraries(test_loop tide)
