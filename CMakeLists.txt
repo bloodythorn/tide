@@ -28,6 +28,7 @@ endif()
 # Include Examples
 if(BUILD_EXAMPLES)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
+endif()
 
 # Debug -> Needs to go at the end
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Debug.cmake)
