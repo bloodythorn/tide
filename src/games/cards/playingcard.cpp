@@ -1,5 +1,7 @@
 #include "tide/games/cards/playingcard.hpp"
 
+namespace tide { namespace Games { namespace Cards {
+
 PlayingCard::PlayingCard() { }
 
 PlayingCard::PlayingCard(const PlayingCard& p_ot) {
@@ -22,3 +24,5 @@ PlayingCard& PlayingCard::operator=(PlayingCard&& p_ot) {
   if(this == &p_ot) return *this;
   return *this;
 }
+
+}/*Cards*/}/*Games*/}/*tide*/
