@@ -4,7 +4,6 @@
 #include <tide/games/chess/chessboard.hpp>
 
 int main(int argc, char** argv) {
-  std::cout << "Hello World";
-  tide::Games::Chess::ChessBoard test;
+  std::cout << "Hello World" << std::endl;
   return EXIT_SUCCESS;
 }
