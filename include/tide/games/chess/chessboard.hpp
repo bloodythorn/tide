@@ -1,12 +1,16 @@
 #ifndef CHESSBOARD_HPP
 #define CHESSBOARD_HPP
 
-#include <cmath>
-#include <cstdint>
-#include <string>
-#include <vector>
+#include <array> //std::array
+#include <string> //string
+#include <vector> //vector
+
+#include <tide/engine/logger.hpp>
 
 namespace tide { namespace Games { namespace Chess {
+
+/* Module Name */
+const std::wstring MODULE_NAME{L"Chess"};
 
 /** @brief Eight Bit Value */
 static const short EIGHT_BITS{8};
@@ -23,7 +27,7 @@ enum class Rank { A = 0, B, C, D, E, F, G };
   * right.
   */
 enum class Square {
-  Er = -1,
+  Error = -1,
   H1 = 0,  G1, F1, E1, D1, C1, B1, A1,
   H2,      G2, F2, E2, D2, C2, B2, A2,
   H3,      G3, F3, E3, D3, C3, B3, A3,
@@ -38,12 +42,28 @@ enum class Square {
 enum class Player { Error = -1, White = 0, Black = 1, Max = 2 };
 
 /** @brief Type enumeration */
-enum class Peice {
+enum class Piece {
   Error  = -1, King = 0, Queen = 1, Bishop = 2,
   Knight =  3, Rook = 4, Pawn  = 5, Max    = 6 };
 
+inline const bool isValid(Square sq) {
+  return (sq != Square::Error && sq != Square::Max);
+}
+inline const bool isValid(Player pl) {
+  return (pl != Player::Error && pl != Player::Max);
+}
+inline const bool isValid(Piece pc) {
+  return (pc != Piece::Error && pc != Piece::Max);
+}
+
 /* Aliases */
 using bitboard = std::uint64_t;
+using bitboards =
+  std::array<
+    std::array<
+      bitboard,
+      static_cast<unsigned int>(Chess::Piece::Max)>,
+    static_cast<unsigned int>(Chess::Player::Max)>;
 
 /* Utility Functions */
 
@@ -96,6 +116,10 @@ bitboard FlipHorizontal(bitboard p_brd);
   */
 bitboard FlipVertical(bitboard p_brd);
 
+inline const bitboard GetMask(Square p_sq) {
+  return bitboard(1) << static_cast<uint64_t>(p_sq);
+}
+
 /* Board Printing Functions */
 
 /** @brief Converts a board to a string representation
@@ -116,24 +140,55 @@ std::wstring BitBoardToString(
   wchar_t p_blk = L'X',
   wchar_t p_wht = L'O');
 
+/** @brief Converts multiple boards to a string representation
+  *
+  * Given a vector of bitboards, break length and character representation,
+  * this function will give all boards in a row, adhering to the break given.
+  * Troubleshooting tool.
+  *
+  * @param p_bvec Vector of bitboards
+  * @param p_brk  Break Width
+  * @param p_pce  Occupied square rep
+  * @param p_blk  Black square rep
+  * @param p_wht  White square rep
+  * @return wstring rep of occupancy
+  */
+std::wstring BitBoardToStringRows(
+  const std::vector<bitboard>& p_bvec,
+  size_t  p_brk = 8,
+  wchar_t p_pce = L'#',
+  wchar_t p_blk = L'X',
+  wchar_t p_wht = L'O');
+
 class ChessBoard {
 public:
 
   /* Ctor/Xtor */
-  ChessBoard() {};
-
-  //ChessBoard(const ChessBoard& p_ot);
-
-  //ChessBoard(ChessBoard&& p_ot);
-
-  //~ChessBoard();
+  explicit ChessBoard(void);
+  ChessBoard(const ChessBoard& p_ot);
+  ChessBoard(ChessBoard&& p_ot);
+  ~ChessBoard();
 
   /* Operator Overloads */
-  //ChessBoard& operator=(const ChessBoard& p_ot);
+  ChessBoard& operator=(const ChessBoard& p_ot);
+  ChessBoard& operator=(ChessBoard&& p_ot);
 
-  //ChessBoard& operator=(ChessBoard&& p_ot);
+  /* Member Functions */
+
+  void     set(Player p_pl, Piece p_pc, Square p_sq);
+  void     unset(Square p_sq);
+  void     clear(void);
+
+  bitboard getOccupancy(Player p_pl, Piece p_pc);
+  Piece    getPiece(Square p_sq);
+  Player   getPlayer(Square p_sq);
+  bool     isEmpty(Square p_sq);
 
 private:
+
+  /* Data Members */
+
+  bitboards m_boards{};
 
   friend std::ostream& operator<<(std::ostream& p_os, const ChessBoard& p_ot) {
     p_os << std::string("Hello");
@@ -145,7 +200,6 @@ private:
   }
 
 };
-
 
 }/*Chess*/}/*games*/}/*tide*/
 

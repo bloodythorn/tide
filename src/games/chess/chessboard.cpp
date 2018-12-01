@@ -1,5 +1,8 @@
 #include "tide/games/chess/chessboard.hpp"
 
+#include <algorithm> // std::copy
+#include <stdexcept> // std::out_of_range
+
 namespace tide { namespace Games { namespace Chess {
 
 bitboard RankMask(unsigned int p_rank) {
@@ -64,11 +67,12 @@ bitboard FlipVertical(bitboard p_brd) {
   return output;
 }
 
+
 std::wstring BitBoardToString(
   bitboard p_board,
   wchar_t  p_pce,
-  wchar_t p_blk,
-  wchar_t p_wht) {
+  wchar_t  p_blk,
+  wchar_t  p_wht) {
 
   bitboard bitMask = 0x8000000000000000;
   std::wstring op;
@@ -88,5 +92,122 @@ std::wstring BitBoardToString(
   return op;
 }
 
+std::wstring BitBoardToStringRows(
+  const std::vector<bitboard>& p_bvec,
+  size_t  p_brk,
+  wchar_t p_pce,
+  wchar_t p_blk,
+  wchar_t p_wht) {
+
+  /* Nothing to do */
+  if(p_bvec.size() == 0) return L"";
+  else if(p_bvec.size() == 1) return BitBoardToString(p_bvec.front());
+
+  /* Initialize */
+  std::wstring op;
+  std::vector<std::wstring> boards;
+  const size_t TOP = EIGHT_BITS - 1;
+  const size_t LINE_SZ = EIGHT_BITS+1; // Compensate for \n
+
+  /* Convert to string rep */
+  for(const auto& a : p_bvec) boards.push_back(BitBoardToString(a));
+
+  /* Convert to a single string */
+  size_t start = 0;
+  size_t end = (boards.size() >= p_brk) ? p_brk - 1 : boards.size() - 1;
+
+  while(start < end) {
+    for(size_t rank = 0; rank <= TOP; ++rank)
+      for(size_t item = start; item <= end; ++item) {
+        auto bg = rank*LINE_SZ;
+        auto en = rank*LINE_SZ + EIGHT_BITS;
+        op.append(boards[item].substr(bg, en-bg));
+        if(item != end) op.append(L" ");
+        else op.append(L"\n");
+      }
+    op.append(L"\n");
+    start += p_brk;
+    end = ((end + p_brk) < boards.size()) ? end + p_brk : boards.size() - 1;
+  }
+  return op;
+}
+
+ChessBoard::ChessBoard(void) { clear(); }
+
+ChessBoard::ChessBoard(const ChessBoard& p_ot) {
+  std::copy(p_ot.m_boards.begin(), p_ot.m_boards.end(), m_boards.begin());
+}
+
+ChessBoard::ChessBoard(ChessBoard&& p_ot) {
+  std::copy(p_ot.m_boards.begin(), p_ot.m_boards.end(), m_boards.begin());
+}
+
+ChessBoard::~ChessBoard() { }
+
+ChessBoard& ChessBoard::operator=(const ChessBoard& p_ot) {
+  if(this != &p_ot) {
+    std::copy(p_ot.m_boards.begin(), p_ot.m_boards.end(), m_boards.begin());
+  }
+  return *this;
+}
+
+ChessBoard& ChessBoard::operator=(ChessBoard&& p_ot) {
+  if(this != &p_ot) {
+    clear();
+    std::copy(p_ot.m_boards.begin(), p_ot.m_boards.end(), m_boards.begin());
+    p_ot.clear();
+  }
+  return *this;
+}
+
+void ChessBoard::clear(void) { m_boards = {}; }
+
+bitboard ChessBoard::getOccupancy(Player p_pl, Piece p_pc) {
+  /* Handle special condition in Player */
+  if(p_pl == Player::Error) return 0;
+  else if(p_pl == Player::Max)
+    return getOccupancy(Player::White, p_pc) |
+           getOccupancy(Player::Black, p_pc);
+
+  /* Handle special condition in Piece */
+  if(p_pc == Piece::Error) return 0;
+  else if(p_pc == Piece::Max)
+    return getOccupancy(p_pl, Piece::King) |
+           getOccupancy(p_pl, Piece::Queen) |
+           getOccupancy(p_pl, Piece::Bishop) |
+           getOccupancy(p_pl, Piece::Knight) |
+           getOccupancy(p_pl, Piece::Rook) |
+           getOccupancy(p_pl, Piece::Pawn);
+
+  return m_boards[static_cast<int>(p_pl)][static_cast<int>(p_pc)];
+}
+
+Piece ChessBoard::getPiece(Square p_sq) {
+  return Piece::Error;
+}
+
+Player ChessBoard::getPlayer(Square p_sq) {
+  return Player::Error;
+}
+
+bool ChessBoard::isEmpty(Square p_sq) {
+  return (getOccupancy(Player::Max, Piece::Max) & GetMask(p_sq)) == 0;
+}
+
+void ChessBoard::set(Player p_pl, Piece p_pc, Square p_sq) {
+  if(!isValid(p_pl) || !isValid(p_pc) || !isValid(p_sq))
+    throw std::out_of_range(
+      "Player/Piece/Square Error or Max in ChessBoard::set");
+  m_boards[static_cast<int>(p_pl)][static_cast<int>(p_pc)] |= GetMask(p_sq);
+}
+
+void ChessBoard::unset(Square p_sq) {
+  if(!isValid(p_sq))
+    throw std::out_of_range("Square Error or Max in ChessBoard::unset");
+  auto mask = GetMask(p_sq);
+  for(auto& a : m_boards)
+    std::transform(a.begin(), a.end(), a.begin(),
+      [p_sq, mask](const bitboard& b) -> bitboard { return (b & !mask); });
+}
 
 }/*Chess*/}/*Games*/}/*tide*/
