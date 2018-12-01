@@ -17,11 +17,10 @@ bool ChessBoardTests(std::deque<std::wstring>& er) {
 }
 
 int main(int argc, char** argv) {
-  std::wcout << "***Chess Tests***" << std::endl;
+  wcout << "***Chess Tests***" << endl;
   ChessBoard test;
 
-  std::wcout << L"ChessBoard Tests:";
-
+  wcout << L"ChessBoard Tests:" << endl;
 
   return EXIT_SUCCESS;
 }
