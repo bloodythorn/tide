@@ -23,6 +23,5 @@ int main(int argc, char** argv) {
   std::wcout << L"ChessBoard Tests:";
 
 
-
   return EXIT_SUCCESS;
 }
