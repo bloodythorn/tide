@@ -43,7 +43,7 @@ private:
 
   /* Data Type Aliases */
   using StateMap =
-    std::unordered_map<std::wstring, std::shared_ptr<tide::Engine::State>>;
+    std::unordered_map<std::wstring, StatePtr>;
 
   /* Data Members */
 
