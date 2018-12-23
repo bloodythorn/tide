@@ -3,6 +3,8 @@
 #include <cmath>  // std::pow
 #include <thread> // std::this_thread::sleep_for
 
+#include "tide/engine/logger.hpp"
+
 namespace tide{ namespace Engine {
 
 const std::wstring Loop::MODULE_NAME{L"Loop"};
@@ -34,6 +36,7 @@ void Loop::setFPS(uint8_t p_fps) {
 }
 
 void Loop::start(void) {
+  LOG_DEBUG(MODULE_NAME) << __func__ << ":Starting Loop.";
   reset();
 
   /* Framing Lambda */

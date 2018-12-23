@@ -8,6 +8,8 @@
 class Console : protected tide::Engine::Engine {
 public:
 
+  static const std::wstring MODULE_NAME;
+
   Console(int, char**);
 
   void Start(void);
