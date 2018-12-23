@@ -10,7 +10,7 @@
 
 namespace tide { namespace Engine { namespace Log {
 
-/* Namespace Data Members */
+  /* Namespace Data Members */
 
   /** @brief Empty Log Message
     *
