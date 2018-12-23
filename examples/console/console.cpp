@@ -6,11 +6,20 @@
 
 #include <memory>
 
+const std::wstring Console::MODULE_NAME{L"Console"};
+
 Console::Console(int, char**) { }
 
 void Console::Start(void) {
+  LOG_DEBUG(MODULE_NAME) << __func__ << ":Adding Console State.";
   m_sm.addStartState(
     tide::Engine::StateManager::StatePtr(new State_Console()));
+
+  LOG_DEBUG(MODULE_NAME) << __func__ << ":Creating CLI Platform";
+  /*TODO: Change to p_CLI */
+  m_platform.reset(new tide::Engine::Platform::Platform());
+
+  LOG_DEBUG(MODULE_NAME) << __func__ << ":Starting Loop.";
   start();
 }
 
