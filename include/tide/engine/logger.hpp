@@ -70,8 +70,10 @@ namespace tide { namespace Engine { namespace Log {
 
   std::wstring GetStamp(const LogLevel&);
 
-  std::wstring ToWideString(std::string);
-  std::string ToNarrowString(std::wstring);
+  std::wstring ToWideString(const std::string&);
+  std::string ToNarrowString(const std::wstring&);
+
+  std::wstring ff(const char*);
 
   /** @brief Converts time point to string */
   std::wstring WGetTimeString(

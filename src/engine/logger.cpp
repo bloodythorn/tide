@@ -45,9 +45,15 @@ std::wstring ToWideString(const std::string& p_in) {
   return conv.from_bytes(p_in);
 }
 
-std::string ToNarrowString(std::wstring& p_in) {
+std::string ToNarrowString(const std::wstring& p_in) {
   std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
   return conv.to_bytes(p_in);
+}
+
+std::wstring ff(const char* p_in) {
+  std::string out{p_in};
+  auto test = tide::Engine::Log::ToWideString(std::string("test"));
+  return ToWideString(p_in) + L"():";
 }
 
 std::wstring WGetTimeString(
