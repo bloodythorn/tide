@@ -65,17 +65,59 @@ namespace tide { namespace Engine { namespace Log {
   unsigned int GetMilliseconds(
     std::chrono::time_point<std::chrono::system_clock>);
 
-  /** @brief Formats Milliseconds string */
-  std::wstring GetMilliString(unsigned int);
+  /** @brief Formats Milliseconds string
+   *
+   * TODO:Desc
+   *
+   * @param uint32_t milliseconds to convert.
+   * @return string with milliseconds.
+   *
+   */
+  std::wstring GetMilliString(uint32_t);
 
+  /** @brief Gets timestamp string.
+   *
+   * TODO: Desc
+   *
+   * @param LogLevel TODO:Desc
+   * @return wstring TODO:Desc
+   */
   std::wstring GetStamp(const LogLevel&);
 
+  /** @brief Widens string.
+   *
+   * TODO: Desc
+   *
+   * @param string TODO:Desc
+   * @return wstring TODO:Desc
+   */
   std::wstring ToWideString(const std::string&);
+
+  /** @brief Narrows string.
+   *
+   * TODO: Desc
+   *
+   * @param wstring TODO:Desc
+   * @return string TODO:Desc
+   */
   std::string ToNarrowString(const std::wstring&);
 
+  /** @brief Formats Function.
+   *
+   * TODO: Desc
+   *
+   * @param cstring TODO:Desc
+   * @return wstring TODO:Desc
+   */
   std::wstring ff(const char*);
 
-  /** @brief Converts time point to string */
+  /** @brief Converts time point to string
+   *
+   * TODO: Desc
+   *
+   * @param time_point TODO:Desc
+   * @return wstring TODO:Desc
+   */
   std::wstring WGetTimeString(
     std::chrono::time_point<std::chrono::system_clock> p_time);
 
