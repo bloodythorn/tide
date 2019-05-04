@@ -9,6 +9,11 @@ add_executable(test_chess test_chess.cpp)
 add_dependencies(test_chess tide)
 target_link_libraries(test_chess tide)
 
+# Chess Tests
+add_executable(test_checkers test_checkers.cpp)
+add_dependencies(test_checkers tide)
+target_link_libraries(test_checkers tide)
+
 # Loop Tests
 add_executable(test_loop test_loop.cpp)
 add_dependencies(test_loop tide)
