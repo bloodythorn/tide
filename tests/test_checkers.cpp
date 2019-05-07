@@ -98,9 +98,17 @@ bool execute(const Options::Option& op, Checkers& ch) {
 
 int main(int argc, char** argv) {
 
+  /* Main execution and output */
   try {
     Options::ArgParser ap{argc, argv};
     Checkers cg;
+
+    /* No comm/args nothing to do. */
+    if(ap.size() == 0) {
+      LOG_INFO(MAIN) << Log::ff(__func__)
+        << "No commands given. Exiting.";
+        exit(EXIT_SUCCESS);
+    }
 
     /* Execute commands given in order */
     while(!ap.empty()) {
@@ -111,6 +119,9 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
       }
     }
+
+    /* Output Results */
+    std::cout << cg << std::endl;
 
   /* Catch General Exceptions */
   } catch(const std::exception& e) {
