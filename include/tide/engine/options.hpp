@@ -10,13 +10,23 @@
 namespace tide { namespace Engine { namespace Options {
 
 /** @brief Option Class */
+using Args = std::vector<std::string>;
 struct Option {
-  std::string opt;
-  std::vector<std::string> optArgs;
+  std::string name;
+  Args args;
 };
 
+/* @brief Module Name */
 static const std::wstring MODULE_NAME{L"Option"};
 
+/** @class ArgParser
+ *
+ * @ingroup Engine
+ *
+ * This class, given command line arguments will parse them into groups of
+ * commands (beginning with a '-'), and arguments.
+ *
+ */
 class ArgParser : public std::queue<Option> {
 public:
 
@@ -52,5 +62,3 @@ private:
 }/*Options*/}/*Engine*/ }/*tide*/
 
 #endif // OPTIONS_HPP
-
-/*TODO: Create Regex for checks*/
