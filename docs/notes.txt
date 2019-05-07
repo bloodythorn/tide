@@ -1,13 +1,3 @@
-Rebase after all commits have been finished.
-
-git rebase -i HEAD~4 -x "git commit --amend --author 'Author Name <author.name@mail.com>' --no-edit"
-
-bloodythorn <bloodythorn@protonmail.com>
-
-git rebase -i HEAD~1 -x "git commit --amend --author 'bloodythorn <bloodythorn@protonmail.com>' --no-edit"
-
-
-
 Each game must have a
 1. Setup
 2. n number of moves
