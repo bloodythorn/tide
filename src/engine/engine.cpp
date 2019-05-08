@@ -8,6 +8,20 @@ namespace Engine {
 /*TODO:FIXME1 */
 Engine::Engine(void) : Loop(60) { }
 
+bool Engine::hasSysEvent(void) {
+  if(!m_platform) {
+    LOG_DEBUG(MODULE_NAME) << __func__ << L": No Platform.";
+    return false;
+  }
+  /*TODO: Finsish this function */
+  return false;
+}
+
+Platform::SysEventPtr Engine::getSysEvent(void) const {
+  /*TODO: Finsish this function */
+  return Platform::SysEventPtr();
+}
+
 void Engine::handle(double p_dt) {
   LOG_DEBUG(MODULE_NAME) << __func__ << ":Handle" << p_dt;
   m_sm.handle(*this, p_dt);
