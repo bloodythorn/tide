@@ -17,37 +17,6 @@ O O O O
  O O O O
 O O O O
 
-   X
-  XXX
- XXXXX
-XXXXXXX
-XXXXXXX
- XXXXX
-  XXX
-   X
-
-1    1
-3   890
-5  34567
-7 6789012
-7 9012345
-5  45678
-3   123
-1    0
-
-13335555577777777777777555553331
-01234567890123456789012345678901
-
-1,3,5,7,9,11...
-To determine number in Rank
-Where 0 < n < 8:
-f(n)= 0 < n < 4  1+n*2
-      3 < n < 8
-
-4 = 0
-5 = 1
-7 = 2
-
 ******
 
 Real Rep:
@@ -59,16 +28,67 @@ Real Rep:
 1 2 3 4
  5 6 7 8
 9 0 1 2
-Moves are represented by two numbers with a dash, such as 2-8.
 
-Each square can be:
-Empty
-Red
-Black
-Red King
-Black King
+Comp Rep
+ 0 1 2 3
+4 5 6 7
+ 8 9 0 1
+2 3 4 5
+ 6 7 8 9
+0 1 2 3
+ 4 5 6 7
+8 9 0 1
 
+Moves are represented by two numbers:
+  Valid Blacks: 1 5  or 7 11
+  Valid Reds: 31 26 or 22 17
 
 01234567890123456789012345678901
 bbbbbbbbbbbbxxxxxxxxrrrrrrrrrrrr
+
+Player is black   : (m_pl == Player::BLACK)
+Player is red     : (m_pl == Player::RED)
+Row is RightShift : (((int)(pos / 4) % 2) == 0)
+Row is LeftShift  : (((int)(pos / 4) % 2) == 1)
+Column 0          : ((pos % COLS) == 0)
+Column 3          : ((pos % COLS) == 3)
+Row 0             : (row == 0)
+Row 7             : (row == 7)
+
+Moves
+(m_pl == Player::BLACK)
+  = +4
+  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 3)
+    = +5
+  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 0) & (row != 7)
+    = +3
+(m_pl == Player::RED)
+  = -4
+  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 0) & (row != 0)
+    = -3
+  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 3)
+    = -5
+
+Moves
+
+move1 = 4 * ((m_pl == Player::BLACK) ? 1 : -1)
+
+
+((m_pl == Player::BLACK) && (row == 7))
+|| ((m_pl == Player::RED) && (row == 0))
+== No 2nd Move
+
+((row != 7) || (m_pl != Player::BLACK)) && ((row != 0) || (m_pl != Player::RED))
+== 2nd Move
+
+(m_pl == Player::BLACK)
+  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 3)
+    = +5
+  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 0) & (row != 7)
+    = +3
+(m_pl == Player::RED)
+  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 0) & (row != 0)
+    = -3
+  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 3)
+    = -5
 
