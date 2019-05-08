@@ -8,8 +8,8 @@
 namespace tide { namespace Games { namespace Checkers {
 
 /* Enums and aliases */
-enum class Player { BLACK, RED, COUNT };
-enum class Piece { MAN, KING, COUNT };
+enum class Player { ERROR = -1, BLACK, RED, COUNT };
+enum class Piece { ERROR = -1, MAN, KING, COUNT };
 using Square = uint8_t;
 static const Square SQUARE_COUNT{32};
 
@@ -55,7 +55,17 @@ public:
    * @param Square which square you need checked.
    * @return Piece containing which team the square belongs to.
    */
-  const bool getPlayer(Square) const;
+  const Player getPlayer(Square) const;
+
+  /** @brief Retrieves piece type
+   *
+   * Given a square this will retrieve which piece is on this square.
+   * It will return COUNT for a clear square.
+   *
+   * @param Square which square you need checked.
+   * @return Piece containing which team the square belongs to.
+   */
+  const Piece getPiece(Square) const;
 
   /** @brief Retrieves if piece is a King or not.
    *
