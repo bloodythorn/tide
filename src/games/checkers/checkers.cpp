@@ -31,34 +31,23 @@ bool Checkers::load(const std::string& p_game) {
   std::stringstream ss{p_game};
 
   /* get player */
-  int pl;
-  ss >> pl;
-  switch(pl) {
-    case 0 : { m_pl = Player::BLACK; break; }
-    case 1 : { m_pl = Player::RED; break; }
-    default : {
-      LOG_ERROR(MODULE_NAME) << Engine::Log::ff(__func__)
-        << "Incorrect Player Number " << pl;
-      break;
-    }
+  char pl; ss >> pl;
+  if((m_pl = charToTurn(pl)) == Player::ERROR) {
+    LOG_ERROR(MODULE_NAME) << Engine::Log::ff(__func__)
+      << "Incorrect Player Number " << pl;
+    return false;
   }
 
   /* Place pieces */
   char c;
   int8_t index;
   while(ss >> c) {
-
-    switch(c) {
-      case 'x': { m_cb.clear(index); break; }
-      case 'b': { m_cb.set(index, Player::BLACK, Piece::MAN); break; }
-      case 'B': { m_cb.set(index, Player::BLACK, Piece::KING); break; }
-      case 'r': { m_cb.set(index, Player::RED, Piece::MAN); break; }
-      case 'R': { m_cb.set(index, Player::RED, Piece::KING); break; }
-      default: {
-        LOG_FATAL(MODULE_NAME) << Engine::Log::ff(__func__)
-          << "Unrecognized character: " << c;
-        return false;
-      }
+    m_cb.set(index, charToPlayer(c), charToPiece(c));
+    if((m_cb.getPiece(index) == Piece::ERROR) ||
+        m_cb.getPlayer(index) == Player::ERROR) {
+      LOG_FATAL(MODULE_NAME) << Engine::Log::ff(__func__)
+        << "Unrecognized character: " << c;
+      return false;
     }
 
     /* Over max count? */
@@ -84,6 +73,36 @@ std::string Checkers::save(void) { return ""; }
 bool Checkers::move(unsigned char, unsigned char) { return false; }
 
 bool Checkers::rmove(unsigned char, unsigned char) { return false; }
+
+const Player Checkers::charToPlayer(const char& p_c) const {
+  switch(p_c) {
+    case 'b': case 'B': return Player::BLACK;
+    case 'r': case 'R': return Player::RED;
+    case 'x': return Player::COUNT;
+    default: return Player::ERROR;
+  }
+}
+
+const Player Checkers::charToTurn(const char& p_c) const {
+  switch(p_c) {
+    case '0': return Player::BLACK;
+    case '1': return Player::RED;
+    default: return Player::ERROR;
+  }
+}
+
+const Piece Checkers::charToPiece(const char& p_c) const {
+  switch(p_c) {
+    case 'b': case 'r': return Piece::MAN;
+    case 'B': case 'R': return Piece::KING;
+    case 'x': return Piece::COUNT;
+    default: return Piece::ERROR;
+  }
+}
+
+const char Checkers::PosToChar(const CheckerBoard&, const Square&) const {
+  return ' ';
+}
 
 Checkers& Checkers::operator=(const Checkers& p_ot) {
   throw std::runtime_error("Unimplemented Copy Assignment");
