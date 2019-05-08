@@ -14,8 +14,12 @@ namespace tide { namespace Engine {
 
 class Engine : protected Loop, private NonCopyable {
 public:
+
   Engine(void);
   virtual void Start(void) = 0;
+  bool hasSysEvent(void);
+  Platform::SysEventPtr getSysEvent(void) const;
+
 protected:
 
   StateManager m_sm;
