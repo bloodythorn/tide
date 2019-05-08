@@ -56,8 +56,10 @@ void Loop::start(void) {
     auto runTime = Clock::now() - m_start;
     auto nextFrame = m_targetFrameTime * m_frame;
 
-    if(runTime > nextFrame) { frame(); }
-    else { std::this_thread::sleep_for(nextFrame - runTime); frame(); }
+    if(runTime < nextFrame) {
+      std::this_thread::sleep_for(nextFrame - runTime);
+    }
+    frame();
   }
 }
 

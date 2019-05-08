@@ -1,37 +1,21 @@
 #ifndef PLATFORM_HPP
 #define PLATFORM_HPP
 
+#include "tide/engine/noncopyable.hpp"
+#include "tide/engine/sysevent.hpp"
+
 #include <ostream>
+#include <string>
 
 namespace tide { namespace Engine { namespace Platform {
 
-class Platform {
+const std::wstring MODULE_NAME{L"Platform"};
+
+class Platform : public NonCopyable {
 public:
-
-  /* Ctor/Xtor */
-  Platform();
-
-  Platform(const Platform& p_ot);
-
-  Platform(Platform&& p_ot);
-
-  ~Platform();
-
-  /* Operator Overloads */
-  Platform& operator=(const Platform& p_ot);
-
-  Platform& operator=(Platform&& p_ot);
 
 private:
 
-  friend std::ostream& operator<<(std::ostream& p_os, const Platform& p_ot) {
-    p_os << typeid(p_ot).name();
-    return p_os;
-  }
-  friend std::wostream& operator<<(std::wostream& p_os, const Platform& p_ot) {
-    p_os << typeid(p_ot).name();
-    return p_os;
-  }
 };
 }/*Platform*/}/*Engine*/}/*tide*/
 
