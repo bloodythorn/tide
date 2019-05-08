@@ -64,23 +64,20 @@ void StateManager::addStartState(StateManager::StatePtr p_st){
 
 void StateManager::handle(Engine& p_en, double p_dt) {
   auto st = m_states.find(m_currentState);
-  if(st == m_states.end())
-    throw std::out_of_range("Current state not found!");
-  //HANDLE ACTIONS
+  if(st == m_states.end()) throw std::out_of_range("Current state not found!");
+  m_states[m_currentState]->handle(p_en, p_dt);
 }
 
 void StateManager::update(Engine& p_en, double p_dt) {
   auto st = m_states.find(m_currentState);
-  if(st == m_states.end())
-    throw std::out_of_range("Current state not found!");
-  //st->second->update(p_en, p_dt);
+  if(st == m_states.end()) throw std::out_of_range("Current state not found!");
+  m_states[m_currentState]->update(p_en, p_dt);
 }
 
 void StateManager::render(Engine& p_en, double p_dt) {
   auto st = m_states.find(m_currentState);
-  if(st == m_states.end())
-    throw std::out_of_range("Current state not found!");
-  //st->second->render(p_en, p_dt);
+  if(st == m_states.end()) throw std::out_of_range("Current state not found!");
+  m_states[m_currentState]->render(p_en, p_dt);
 }
 
 }/*engine*/}/*tide*/
