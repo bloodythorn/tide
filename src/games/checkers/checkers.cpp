@@ -2,73 +2,136 @@
 
 #include <tide/engine/logger.hpp>
 
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <vector>
+
 namespace tide { namespace Games { namespace Checkers {
 
 #include <stdexcept>
 
 const std::wstring Checkers::MODULE_NAME{L"Checkers"};
 
+/*************************************************************/
 Checkers::Checkers() { }
 
-Checkers::Checkers(const Checkers& p_ot) {
-  throw std::runtime_error("Unimplemented Copy Constructor");
-}
+/*************************************************************/
+Checkers::Checkers(const Checkers& p_ot) { }
 
-Checkers::Checkers(Checkers&& p_ot) {
-  throw std::runtime_error("Unimplemented move Constructor");
-}
+/*************************************************************/
+Checkers::Checkers(Checkers&& p_ot) { }
 
+/*************************************************************/
 Checkers::~Checkers() { }
-
-std::string Checkers::listMoves(void) { return "Implement me!"; }
-
-std::string Checkers::rlistMoves(void) { return "Implement me!"; }
 
 bool Checkers::newGame(void) { return load(ENGLISH_DR); }
 
+/*************************************************************/
 bool Checkers::load(const std::string& p_game) {
 
-  std::stringstream ss{p_game};
+  /* Check size to make sure input is 33 char */
+  if(p_game.size() != SQUARE_COUNT+1) {
+    LOG_FATAL(MODULE_NAME) << Engine::Log::ff(__func__)
+      << "Input string is incorrect size. Must be "
+      << SQUARE_COUNT+1;
+    return false;
+  }
 
   /* get player */
-  char pl; ss >> pl;
-  if((m_pl = charToTurn(pl)) == Player::ERROR) {
+  if((m_pl = charToTurn(p_game[0])) == Player::ERROR) {
     LOG_ERROR(MODULE_NAME) << Engine::Log::ff(__func__)
-      << "Incorrect Player Number " << pl;
+      << "Incorrect Player Number " << p_game[0];
     return false;
   }
 
   /* Place pieces */
-  char c;
-  int8_t index;
-  while(ss >> c) {
-    m_cb.set(index, charToPlayer(c), charToPiece(c));
-    if((m_cb.getPiece(index) == Piece::ERROR) ||
-        m_cb.getPlayer(index) == Player::ERROR) {
+  size_t index{0};
+  auto iter = ++p_game.cbegin();
+  while(index < SQUARE_COUNT) {
+
+    m_cb.set(
+      index,
+      charToPlayer(*iter),
+      charToPiece(*iter));
+
+    if(checkError(m_cb[index])) {
       LOG_FATAL(MODULE_NAME) << Engine::Log::ff(__func__)
-        << "Unrecognized character: " << c;
+        << "Unrecognized character: " << *iter;
       return false;
     }
 
-    /* Over max count? */
-    if(index++ > SQUARE_COUNT-1) {
-      LOG_FATAL(MODULE_NAME) << Engine::Log::ff(__func__)
-        << "Game load string longer than allowed: " << SQUARE_COUNT;
-    return false;
-    }
-  }
-
-  /* Under max count? */
-  if(index++ < SQUARE_COUNT-1) {
-      LOG_FATAL(MODULE_NAME) << Engine::Log::ff(__func__)
-        << "Game load string shorter than allowed: " << SQUARE_COUNT;
-    return false;
+    ++index; ++iter;
   }
 
   return true;
 }
 
 std::string Checkers::save(void) { return ""; }
+
+const std::string Checkers::listMoves(void) const{
+  /* Helper Functions */
+  auto isPlayer =
+    [&](const Contents& c) ->bool { return std::get<0>(c) == m_pl; };
+
+  /* Output */
+  std::stringstream ss;
+
+  /* Find each piece that is owned by the current player */
+  //auto iter = std::find_if(m_cb.begin(), m_cb.end(), isPlayer);
+  auto iter = m_cb.cbegin();
+  while(iter != m_cb.end()) {
+    auto pos = std::distance(m_cb.begin(), iter);
+
+    LOG_DEBUG(MODULE_NAME) << Engine::Log::ff(__func__)
+      << "Pos: " << pos
+      << " Row: " << static_cast<int>(pos / 4) << " Col: " << (pos % 4);
+
+    auto pl = std::get<0>(*iter);
+    auto BLKMoves = getDiags(pos, Player::BLACK);
+    auto REDMoves = getDiags(pos, Player::RED);
+
+    for(const auto& a : BLKMoves)
+      LOG_DEBUG(MODULE_NAME) << Engine::Log::ff(__func__) << a;
+    for(const auto& a : REDMoves)
+      LOG_DEBUG(MODULE_NAME) << Engine::Log::ff(__func__) << a;
+
+    //iter = std::find_if(++iter, m_cb.end(), isPlayer);;
+    ++iter;
+  }
+
+  return ss.str();
+}
+
+const std::string Checkers::rlistMoves(void) const { return "Implement me!"; }
+
+const std::vector<Square> Checkers::getDiags(
+  const Square& p_s,
+  const Player& p_p) const {
+    std::vector<Square> out;
+
+    auto row = static_cast<int>(p_s / COLS);
+    if((p_p == Player::BLACK) && (row != 7)) {
+      out.push_back(p_s + COLS);
+      if((row % 2 == 0) && (p_s % COLS != 3)) {
+        out.push_back(p_s + COLS + 1);
+      } else
+      if((row % 2 == 1) && (p_s % COLS != 0)) {
+        out.push_back(p_s + COLS - 1);
+      }
+    } else
+    if ((p_p == Player::RED) && (row != 0)) {
+      out.push_back(p_s - COLS);
+      if((row % 2 == 0) && (p_s % COLS != 3)) {
+        out.push_back(p_s - (COLS + 1));
+      } else
+      if((row % 2 == 1) && (p_s % COLS != 0)) {
+        out.push_back(p_s - (COLS- 1 ));
+      }
+    }
+
+    return out;
+}
 
 bool Checkers::move(unsigned char, unsigned char) { return false; }
 
@@ -100,8 +163,9 @@ const Piece Checkers::charToPiece(const char& p_c) const {
   }
 }
 
-const char Checkers::PosToChar(const CheckerBoard&, const Square&) const {
-  return ' ';
+const bool Checkers::checkError(const Contents& p_c) const {
+  return (std::get<0>(p_c) == Player::ERROR) ||
+         (std::get<1>(p_c) == Piece::ERROR);
 }
 
 Checkers& Checkers::operator=(const Checkers& p_ot) {

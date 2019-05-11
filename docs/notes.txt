@@ -30,14 +30,14 @@ Real Rep:
 9 0 1 2
 
 Comp Rep
- 0 1 2 3
-4 5 6 7
- 8 9 0 1
-2 3 4 5
- 6 7 8 9
-0 1 2 3
- 4 5 6 7
-8 9 0 1
+  00  01  02  03
+04  05  06  07
+  08  09  10  11
+12  13  14  15
+  16  17  18  19
+20  21  22  23
+  24  25  26  27
+28  29  30  31
 
 Moves are represented by two numbers:
   Valid Blacks: 1 5  or 7 11
@@ -55,40 +55,23 @@ Column 3          : ((pos % COLS) == 3)
 Row 0             : (row == 0)
 Row 7             : (row == 7)
 
-Moves
-(m_pl == Player::BLACK)
-  = +4
-  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 3)
-    = +5
-  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 0) & (row != 7)
-    = +3
-(m_pl == Player::RED)
-  = -4
-  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 0) & (row != 0)
-    = -3
-  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 3)
-    = -5
 
-Moves
-
-move1 = 4 * ((m_pl == Player::BLACK) ? 1 : -1)
-
-
-((m_pl == Player::BLACK) && (row == 7))
-|| ((m_pl == Player::RED) && (row == 0))
-== No 2nd Move
-
-((row != 7) || (m_pl != Player::BLACK)) && ((row != 0) || (m_pl != Player::RED))
-== 2nd Move
-
-(m_pl == Player::BLACK)
-  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 3)
-    = +5
-  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 0) & (row != 7)
-    = +3
-(m_pl == Player::RED)
-  (((int)(pos / 4) % 2) == 0) & ! ((pos % COLS) == 0) & (row != 0)
-    = -3
-  (((int)(pos / 4) % 2) == 1) & ! ((pos % COLS) == 3)
-    = -5
-
+    auto row = static_cast<int>(p_s / COLS);
+    if((p_p == Player::BLACK) && (row != 7)) {
+      out.push_back(p_s + COLS);
+      if((row % 2 == 0) && (p_s % COLS != 3)) {
+        out.push_back(p_s + COLS + 1);
+      } else
+      if((row % 2 == 1) && (p_s % COLS != 0)) {
+        out.push_back(p_s + COLS - 1);
+      }
+    } else
+    if ((p_p == Player::RED) && (row != 0)) {
+      out.push_back(p_s - COLS);
+      if((row % 2 == 0) && (p_s % COLS != 3)) {
+        out.push_back(p_s - (COLS + 1));
+      } else
+      if((row % 2 == 1) && (p_s % COLS != 0)) {
+        out.push_back(p_s - (COLS- 1 ));
+      }
+    }

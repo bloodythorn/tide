@@ -12,8 +12,13 @@ namespace tide { namespace Games { namespace Checkers {
 
 /* New Game txt string for standard English Draughts */
 static const std::string ENGLISH_DR{"0bbbbbbbbbbbbxxxxxxxxrrrrrrrrrrrr"};
+
+/* Array with text rep of squares */
 static constexpr std::array<char, (int)Piece::COUNT + 1> CHAR_PIECE_REP
   = { 'b', 'r', 'x' };
+
+/* Invalid Move Constant */
+static constexpr int MOVE_ERROR{255};
 
 /** @class Options
  *
@@ -54,8 +59,10 @@ public:
    *
    * @return std::string containing game state.
    */
-  std::string listMoves(void);
-  std::string rlistMoves(void);
+  const std::string listMoves(void) const;
+
+  const std::string rlistMoves(void) const;
+
   bool newGame(void);
   bool load(const std::string&);
   bool move(Square, Square);
@@ -63,7 +70,6 @@ public:
 
   /* Operator Overloads */
   Checkers& operator=(const Checkers& p_ot);
-
   Checkers& operator=(Checkers&& p_ot);
 
 private:
@@ -76,7 +82,11 @@ private:
   const Player charToPlayer(const char&) const;
   const Player charToTurn(const char&) const;
   const Piece charToPiece(const char&) const;
-  const char PosToChar(const CheckerBoard&, const Square&) const;
+  const bool checkError(const Contents&) const;
+  const bool outOfBounds(const Square&, const Player&) const;
+  const std::vector<Square> getDiags(
+    const Square& p_s,
+    const Player& p_p) const;
 
   friend std::ostream& operator<<(std::ostream& p_os, const Checkers& p_ot) {
     p_os << typeid(p_ot).name();

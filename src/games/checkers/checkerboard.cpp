@@ -5,7 +5,9 @@
 namespace tide { namespace Games { namespace Checkers {
 
 /************************************************************/
-CheckerBoard::CheckerBoard() { board.fill(Piece::COUNT);  }
+CheckerBoard::CheckerBoard() {
+  this->fill(std::make_tuple(Player::COUNT, Piece::COUNT));
+}
 
 /************************************************************/
 CheckerBoard::CheckerBoard(const CheckerBoard& p_ot) {
@@ -21,19 +23,29 @@ CheckerBoard::CheckerBoard(CheckerBoard&& p_ot) {
 CheckerBoard::~CheckerBoard() { }
 
 /************************************************************/
-void CheckerBoard::clear(Square) { }
+void CheckerBoard::clear(Square p_sq) {
+  set(p_sq, Player::COUNT, Piece::COUNT);
+}
 
 /************************************************************/
-void CheckerBoard::set(Square, Player, Piece) {}
+void CheckerBoard::set(Square p_sq, Player p_pl, Piece p_pi) {
+  (*this)[p_sq] = std::make_tuple(p_pl, p_pi);
+}
 
 /************************************************************/
-const Player CheckerBoard::getPlayer(Square) const { return Player::ERROR; }
+const Player CheckerBoard::getPlayer(Square p_sq) const {
+  return std::get<0>((*this)[p_sq]);
+}
 
 /************************************************************/
-const Piece CheckerBoard::getPiece(Square) const { return Piece::ERROR; }
+const Piece CheckerBoard::getPiece(Square p_sq) const {
+  return std::get<1>((*this)[p_sq]);
+}
 
 /************************************************************/
-const bool CheckerBoard::isKing(Square) const { return false; }
+const bool CheckerBoard::isKing(Square p_sq) const {
+  return (getPiece(p_sq) == Piece::KING);
+}
 
 /************************************************************/
 CheckerBoard& CheckerBoard::operator=(const CheckerBoard& p_ot) {

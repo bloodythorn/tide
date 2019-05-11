@@ -4,6 +4,7 @@
 #include <array>
 #include <ostream>
 #include <string>
+#include <tuple>
 
 namespace tide { namespace Games { namespace Checkers {
 
@@ -11,9 +12,13 @@ namespace tide { namespace Games { namespace Checkers {
 enum class Player { ERROR = -1, BLACK, RED, COUNT };
 enum class Piece { ERROR = -1, MAN, KING, COUNT };
 using Square = uint8_t;
+using Contents = std::tuple<Player, Piece>;
 static const Square SQUARE_COUNT{32};
+static const uint8_t ROWS{8};
+static const uint8_t COLS{4};
+using BoardData = std::array<Contents, SQUARE_COUNT>;
 
-class CheckerBoard {
+class CheckerBoard : public BoardData {
 public:
 
   /* Ctor/Xtor */
@@ -79,13 +84,9 @@ public:
 
   /* Operator Overloads */
   CheckerBoard& operator=(const CheckerBoard& p_ot);
-
   CheckerBoard& operator=(CheckerBoard&& p_ot);
 
 private:
-
-  /* Data */
-  std::array<Piece, SQUARE_COUNT> board;
 
   /* Friend Functions for Streams */
   friend std::ostream& operator<<(std::ostream& p_os, const CheckerBoard& p_ot) {
